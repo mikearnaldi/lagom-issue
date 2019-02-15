@@ -2,19 +2,18 @@ package org.example.hello.impl
 
 import com.lightbend.lagom.scaladsl.api.ServiceLocator
 import com.lightbend.lagom.scaladsl.api.ServiceLocator.NoServiceLocator
-import com.lightbend.lagom.scaladsl.server._
-import com.lightbend.lagom.scaladsl.devmode.LagomDevModeComponents
-import play.api.libs.ws.ahc.AhcWSComponents
-import org.example.hello.api.HelloService
 import com.lightbend.lagom.scaladsl.broker.kafka.LagomKafkaComponents
-import com.lightbend.lagom.scaladsl.persistence.jdbc.JdbcPersistenceComponents
+import com.lightbend.lagom.scaladsl.devmode.LagomDevModeComponents
+import com.lightbend.lagom.scaladsl.persistence.cassandra.CassandraPersistenceComponents
+import com.lightbend.lagom.scaladsl.server._
 import com.softwaremill.macwire._
-import play.api.db.HikariCPComponents
+import org.example.hello.api.HelloService
+import play.api.libs.ws.ahc.AhcWSComponents
 
 class HelloLoader extends LagomApplicationLoader {
 
   override def load(context: LagomApplicationContext): LagomApplication =
-    new HelloApplication(context) {
+    new HelloApplication(context) with LagomKafkaComponents {
       override def serviceLocator: ServiceLocator = NoServiceLocator
     }
 
@@ -26,9 +25,7 @@ class HelloLoader extends LagomApplicationLoader {
 
 abstract class HelloApplication(context: LagomApplicationContext)
     extends LagomApplication(context)
-    with JdbcPersistenceComponents
-    with LagomKafkaComponents
-    with HikariCPComponents
+    with CassandraPersistenceComponents
     with AhcWSComponents {
 
   // Bind the service that this server provides

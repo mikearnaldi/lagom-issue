@@ -1,7 +1,7 @@
 package org.example.hello.impl
 
 import com.lightbend.lagom.scaladsl.server.LocalServiceLocator
-import com.lightbend.lagom.scaladsl.testkit.ServiceTest
+import com.lightbend.lagom.scaladsl.testkit.{ServiceTest, TestTopicComponents}
 import org.scalatest.{AsyncWordSpec, BeforeAndAfterAll, Matchers}
 import org.example.hello.api._
 
@@ -9,9 +9,9 @@ class HelloServiceSpec extends AsyncWordSpec with Matchers with BeforeAndAfterAl
 
   private val server = ServiceTest.startServer(
     ServiceTest.defaultSetup
-      .withCassandra()
+      .withCassandra(true)
   ) { ctx =>
-    new HelloApplication(ctx) with LocalServiceLocator
+    new HelloApplication(ctx) with LocalServiceLocator with TestTopicComponents
   }
 
   val client = server.serviceClient.implement[HelloService]
